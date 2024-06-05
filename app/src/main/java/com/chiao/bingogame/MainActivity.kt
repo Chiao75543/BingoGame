@@ -1,31 +1,23 @@
 package com.chiao.bingogame
 
 
-import android.content.Context
-import android.content.Intent
+
 import android.os.Bundle
-import android.text.style.BackgroundColorSpan
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.chiao.bingogame.ui.theme.BingoGameTheme
-import androidx.compose.material.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,22 +25,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.chiao.bingogame.bingo.BingoModel
+import com.chiao.bingogame.bingo.BingoViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             BingoGameTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    BingoGame()
-                }
+                val navController = rememberNavController()
+                AppNavGraph(navController = navController)
             }
         }
     }
@@ -56,12 +53,27 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun BingoSizeSelection(){
+fun AppNavGraph(navController: NavHostController){
+    NavHost(navController = navController, startDestination = "main"){
+        composable("main"){
+            BingoSizeSelection(navController)
+        }
+        composable("game") {
+            //BingoView(navController)
+        }
+    }
+}
+
+@Composable
+fun BingoSizeSelection(navController: NavHostController){
+    val viewModel = BingoViewModel()
+
     var textSize by remember {
         mutableStateOf("")
     }
+    val context = LocalContext.current
 
-    Column (
+        Column (
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxSize()
@@ -75,7 +87,8 @@ fun BingoSizeSelection(){
 
         TextField(value = textSize,
             onValueChange = {
-                if (it.all {char -> char.isDigit() && it.toInt() in 1..9}){
+                // 只能輸入數字
+                if (it.isDigitsOnly()){
                     textSize = it
                 }
             },
@@ -84,12 +97,21 @@ fun BingoSizeSelection(){
             )},
         )
 
-        Button(onClick = { /*TODO*/ },
+        Button(onClick = {
+                 textSize.toIntOrNull()?.let { size ->
+                     if (size in 3..9){
+                         navController.navigate("game")
+                         viewModel.startGame(size)
+                     }else{
+                         Toast.makeText(context,"Please enter the size in 3~9",Toast.LENGTH_SHORT).show()
+                     }
+                 }
+        },
                 modifier = Modifier
                     .padding(30.dp)
                     .width(150.dp),
                 colors = ButtonDefaults.buttonColors(Color.Gray),
-            content = {
+                content = {
                 Text(text = "Play")
             }
         )
@@ -101,6 +123,7 @@ fun BingoSizeSelection(){
 @Composable
 fun BingoGame() {
     BingoGameTheme {
-       BingoSizeSelection()
+        val navController = rememberNavController()
+       BingoSizeSelection(navController)
     }
 }

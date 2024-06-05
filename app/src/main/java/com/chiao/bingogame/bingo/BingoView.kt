@@ -9,6 +9,9 @@ class BingoView {
 
 
 @Composable
-fun BingoGameView(){
-
+fun BingoGameView(size : Int){
+    val board = List(size) {
+        List(size){
+        }
+    }
 }
