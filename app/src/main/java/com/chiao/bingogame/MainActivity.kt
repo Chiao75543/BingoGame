@@ -3,6 +3,7 @@ package com.chiao.bingogame
 
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -30,13 +31,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import com.chiao.bingogame.bingo.BingoModel
+import com.chiao.bingogame.bingo.BingoView
 import com.chiao.bingogame.bingo.BingoViewModel
 
 class MainActivity : ComponentActivity() {
@@ -56,24 +56,26 @@ class MainActivity : ComponentActivity() {
 fun AppNavGraph(navController: NavHostController){
     NavHost(navController = navController, startDestination = "main"){
         composable("main"){
-            BingoSizeSelection(navController)
+            BeginScreen(navController)
         }
         composable("game") {
-            //BingoView(navController)
+            // 建立遊戲頁面
+            val viewModel: BingoViewModel = viewModel()
+            BingoView(viewModel).GameScreen()
         }
     }
 }
 
 @Composable
-fun BingoSizeSelection(navController: NavHostController){
-    val viewModel = BingoViewModel()
+fun BeginScreen(navController: NavHostController){
+    val viewModel : BingoViewModel = viewModel()
 
     var textSize by remember {
         mutableStateOf("")
     }
     val context = LocalContext.current
 
-        Column (
+    Column (
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxSize()
@@ -100,8 +102,8 @@ fun BingoSizeSelection(navController: NavHostController){
         Button(onClick = {
                  textSize.toIntOrNull()?.let { size ->
                      if (size in 3..9){
+                         viewModel.createNewGame(size)
                          navController.navigate("game")
-                         viewModel.startGame(size)
                      }else{
                          Toast.makeText(context,"Please enter the size in 3~9",Toast.LENGTH_SHORT).show()
                      }
@@ -124,6 +126,6 @@ fun BingoSizeSelection(navController: NavHostController){
 fun BingoGame() {
     BingoGameTheme {
         val navController = rememberNavController()
-       BingoSizeSelection(navController)
+       BeginScreen(navController)
     }
 }
