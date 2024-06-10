@@ -54,21 +54,21 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun AppNavGraph(navController: NavHostController){
+    val viewModel : BingoViewModel = viewModel()
     NavHost(navController = navController, startDestination = "main"){
         composable("main"){
-            BeginScreen(navController)
+            BeginScreen(navController,viewModel)
         }
         composable("game") {
             // 建立遊戲頁面
-            val viewModel: BingoViewModel = viewModel()
             BingoView(viewModel).GameScreen()
         }
     }
 }
 
 @Composable
-fun BeginScreen(navController: NavHostController){
-    val viewModel : BingoViewModel = viewModel()
+fun BeginScreen(navController: NavHostController, viewModel: BingoViewModel){
+
 
     var textSize by remember {
         mutableStateOf("")
@@ -101,11 +101,11 @@ fun BeginScreen(navController: NavHostController){
 
         Button(onClick = {
                  textSize.toIntOrNull()?.let { size ->
-                     if (size in 3..9){
+                     if (size in 3..5){
                          viewModel.createNewGame(size)
                          navController.navigate("game")
                      }else{
-                         Toast.makeText(context,"Please enter the size in 3~9",Toast.LENGTH_SHORT).show()
+                         Toast.makeText(context,"Please enter the size in 3~5",Toast.LENGTH_SHORT).show()
                      }
                  }
         },
@@ -121,11 +121,11 @@ fun BeginScreen(navController: NavHostController){
 
 }
 
-@Preview(showBackground = true)
-@Composable
-fun BingoGame() {
-    BingoGameTheme {
-        val navController = rememberNavController()
-       BeginScreen(navController)
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun BingoGame() {
+//    BingoGameTheme {
+//        val navController = rememberNavController()
+//       BeginScreen(navController)
+//    }
+//}

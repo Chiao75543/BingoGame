@@ -13,10 +13,24 @@ class BingoViewModel : ViewModel() {
     private val _bingoState = MutableStateFlow<BingoModel?>(null)
     val bingoState : StateFlow<BingoModel?> = _bingoState
 
+    private val _randomNumber = MutableStateFlow<Int?>(null)
+    val randomNumber : StateFlow<Int?> = _randomNumber
+
     fun createNewGame(size : Int){
         viewModelScope.launch{
             _bingoState.value = BingoModel(size)
-            Log.d("BingoViewModel", "New game created with size: $size")
         }
     }
+
+    fun generateRandomNumber(){
+        viewModelScope.launch {
+            _randomNumber.value = _bingoState.value?.generateRandomNumber()
+        }
+    }
+
+    fun changeBackground(){
+
+    }
+
+    fun isBingo(){}
 }
