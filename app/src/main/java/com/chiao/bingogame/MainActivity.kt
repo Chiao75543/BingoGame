@@ -118,14 +118,4 @@ fun BeginScreen(navController: NavHostController, viewModel: BingoViewModel){
             }
         )
     }
-
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun BingoGame() {
-//    BingoGameTheme {
-//        val navController = rememberNavController()
-//       BeginScreen(navController)
-//    }
-//}
