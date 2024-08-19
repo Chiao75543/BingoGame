@@ -7,7 +7,7 @@ import kotlin.random.Random
 data class BingoModel (
     val size : Int,
     // 避免遊戲玩太久 只使用合適的範圍數字並打亂
-    var gameBoard : List<BoardStatus> = List(size * size) {
+    val gameBoard : List<BoardStatus> = List(size * size) {
         BoardStatus( it + 1)
     }) {
     fun generateRandomNumber() : Int{

@@ -53,6 +53,7 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
+
 fun AppNavGraph(navController: NavHostController){
     val viewModel : BingoViewModel = viewModel()
     NavHost(navController = navController, startDestination = "main"){
